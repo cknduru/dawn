@@ -2,6 +2,8 @@ import weather
 import time
 import subprocess
 import threading
+import logger
+
 
 SLEEP_INTERVAL = 55 # run every 55 seconds
 last_trigger_m = 0 # last trigger minute to eliminate multiple triggers within SLEEP_INTERVAL
@@ -31,7 +33,7 @@ def should_trigger():
     h, m = format_current_time(format24=True)
     
     if h == trigger_h and m == trigger_m and trigger_m != last_trigger_m:
-        print('Trigger')
+        logger.write('trigger')
         last_trigger_m = m # update last trigger minute
         return True
     else:
@@ -60,6 +62,6 @@ christmas holiday and that you have visitors at six o clock""".format(h,
         cmd = 'omxplayer music/fr.mp3 --vol -1500'
         subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
 
-def __init__():
-    print('Dawn launched')
+if __name__ == "__main__":
+    logger.write('dawn launched')
     main()
