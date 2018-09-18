@@ -3,7 +3,7 @@ import time
 import subprocess
 import threading
 
-SLEEP_INTERVAL = 15 # run every minute
+SLEEP_INTERVAL = 55 # run every 55 seconds
 last_trigger_m = 0 # last trigger minute to eliminate multiple triggers within SLEEP_INTERVAL
 
 # strip time of leading zeros, if any
@@ -26,8 +26,8 @@ def format_current_time(format24=False):
 
 def should_trigger():
     global last_trigger_m
-    trigger_h = '20'
-    trigger_m = '29'
+    trigger_h = '7'
+    trigger_m = '30'
     h, m = format_current_time(format24=True)
     
     if h == trigger_h and m == trigger_m and trigger_m != last_trigger_m:
@@ -35,27 +35,31 @@ def should_trigger():
         last_trigger_m = m # update last trigger minute
         return True
     else:
-        print(' no trigger {} {}'.format(h, m))
-    
+        return False    
 
 def speak(text):
     cmd = '/home/pi/bin/speak.sh \"{}\"'.format(text)
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    proc.wait()
 
 def main():
     weather.update_weather()
 
     h, m = format_current_time()
 
-    greeting = """Good morning. The time is {} {} and it is time to wake up. 
-The weather is {} so im sure it will be a lovely day""".format(h,
+    # split this up to make pronounciation more fluent?
+    greeting = """Good morning. The time is {} {} and it is time to wake up.
+The weather is {} so im sure it will be a lovely day. I have prepared a song to start the day. Remember to book
+christmas holiday and that you have visitors at six o clock""".format(h,
                                                                m,
                                                                weather.last_weather)
+
     if should_trigger():
         speak(greeting)
-        print(greeting)
-    
-    threading.Timer(SLEEP_INTERVAL, main).start()
 
-print('Dawn launched')
-main()
+        cmd = 'omxplayer music/fr.mp3 --vol -1500'
+        subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+
+def __init__():
+    print('Dawn launched')
+    main()
