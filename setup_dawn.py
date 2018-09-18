@@ -3,8 +3,7 @@ import logger
 import os
 
 def install_crontab():
-    logger.write('installing crontab..')
-    subprocess.check_output(['./install_crontab.sh', 'testarg'])
+    subprocess.check_output(['./install_crontab.sh'])
     logger.write('installed crontab')
 
 def create_directory(dir_name):
