@@ -63,5 +63,4 @@ christmas holiday and that you have visitors at six o clock""".format(h,
         subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
 
 if __name__ == "__main__":
-    logger.write('dawn launched')
     main()
