@@ -1,6 +1,8 @@
 # Embedded file name: event_manager.py
 import logger
 import datetime
+import importlib
+
 registered_triggers = {}
 
 # register_trigger('24:17:45', testfunc)
@@ -11,7 +13,6 @@ def register_trigger(trigger_time, trigger_function):
 def unregister_trigger(trigger_time):
     del registered_triggers[trigger_time]
     logger.write('unregistered trigger @ {}'.format(trigger_time))
-
 
 def should_trigger():
     now = datetime.datetime.now()
@@ -28,3 +29,25 @@ def should_trigger():
         unregister_trigger(assembled_string)
     except KeyError:
         pass
+
+def read_event_file():
+    conf_file_path = '/home/pi/Desktop/dawn/config/events.conf'
+
+    with open(conf_file_path) as cfp:  
+        line = cfp.readline()
+
+        while line:
+            if 'recurring' in line:
+                event_type, event_time, event_file, event_class = line.split()
+
+                print('event_type = {} event_time = {} event_file = {} event_class = {}'.format(event_type, event_time, event_file, event_class))
+
+                mod = importlib.import_module(event_file)
+                mod.run()
+        
+            line = cfp.readline()
+
+        print("{}".format(line.strip()))
+
+
+read_event_file()
